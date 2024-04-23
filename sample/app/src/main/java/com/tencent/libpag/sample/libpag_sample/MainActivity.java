@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
             "Render an interval of the pag file",
             "Render Multiple PAGImageView",
             "Render PAGImageView in list",
+            "Play Audio In PAG File",
     };
 
     @Override
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
             case 2:
             case 3:
             case 5:
+            case 8:
                 goToAPIsDetail(position);
                 break;
             case 4:

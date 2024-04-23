@@ -1,5 +1,6 @@
 package com.tencent.libpag.sample.libpag_sample;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,10 +10,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
+import android.media.MediaDataSource;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import androidx.core.app.ActivityCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -35,7 +40,12 @@ import org.libpag.PAGView;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+
+import com.tencent.libpag.sample.libpag_sample.utils.AacPlayer;
+import com.tencent.libpag.sample.libpag_sample.utils.MemoryUtil;
 
 public class APIsDetailActivity extends AppCompatActivity {
 
@@ -73,6 +83,7 @@ public class APIsDetailActivity extends AppCompatActivity {
         initPAGView();
     }
 
+    @SuppressLint("NewApi")
     private void initPAGView() {
         RelativeLayout backgroundView = findViewById(R.id.background_view);
         final PAGView pagView = new PAGView(this);
@@ -127,6 +138,49 @@ public class APIsDetailActivity extends AppCompatActivity {
                 pagFile.setDuration(3000000);
                 pagComposition.addLayer(pagFile);
                 pagView.setComposition(pagComposition);
+                break;
+            case 8:
+                pagFile1 = PAGFile.Load(getAssets(), "audio.pag");
+                ByteBuffer byteBuffer = pagFile1.audioBytes();
+                Log.i(TAG, "byte buffer array size:" + byteBuffer.remaining());
+                byte[] aacData = new byte[byteBuffer.remaining()];
+                byteBuffer.get(aacData);
+                Log.i(TAG, "audioStartTime: " + pagFile1.audioStartTime());
+                // AacPlayer aacPlayer = new AacPlayer(byteBuffer);
+                MediaPlayer player = new MediaPlayer();
+                try {
+                    player.setDataSource(new MediaDataSource() {
+                        @Override
+                        public int readAt(long position, byte[] buffer, int offset, int size) throws IOException {
+                            int start = (int) position + offset;
+                            int end = Math.min(start + size, aacData.length);
+                            int finalSize = end - start;
+                            Log.i(TAG, "readat: position:" + position + " buffer size:" + buffer.length + " offset:" + offset + " size:" + size + " final size:" + finalSize);
+                            for (int i = start, k = 0; i < end ; i++, k++) {
+                                buffer[k] = aacData[i];
+                            }
+                            return finalSize;
+                        }
+
+                        @Override
+                        public long getSize() throws IOException {
+                            return aacData.length;
+                        }
+
+                        @Override
+                        public void close() throws IOException {
+
+                        }
+                    });
+                    player.prepare();
+                    player.setVolume(50, 50);
+                    player.setLooping(true);
+                    player.start();
+                } catch (IOException e) {
+                    Log.w(TAG, "exception:" + e.toString(), e);
+                }
+                pagView.setComposition(pagFile1);
+                pagView.setRepeatCount(1);
                 break;
             default:
                 break;
