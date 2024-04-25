@@ -67,6 +67,8 @@ public class APIsDetailActivity extends AppCompatActivity {
     private PAGPlayer pagPlayer;
     private PAGComposition pagComposition;
 
+    MediaPlayer player = null;
+
     private static final File OUTPUT_DIR = Environment.getExternalStorageDirectory();
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -145,10 +147,8 @@ public class APIsDetailActivity extends AppCompatActivity {
                 Log.i(TAG, "byte buffer array size:" + byteBuffer.remaining());
                 byte[] aacData = new byte[byteBuffer.remaining()];
                 byteBuffer.get(aacData);
-                Log.i(TAG, "audioStartTime: " + pagFile1.audioStartTime());
-                // AacPlayer aacPlayer = new AacPlayer(byteBuffer);
-                MediaPlayer player = new MediaPlayer();
                 try {
+                    player = new MediaPlayer();
                     player.setDataSource(new MediaDataSource() {
                         @Override
                         public int readAt(long position, byte[] buffer, int offset, int size) throws IOException {
@@ -174,7 +174,7 @@ public class APIsDetailActivity extends AppCompatActivity {
                     });
                     player.prepare();
                     player.setVolume(50, 50);
-                    player.setLooping(true);
+                    player.setLooping(false);
                     player.start();
                 } catch (IOException e) {
                     Log.w(TAG, "exception:" + e.toString(), e);
@@ -186,8 +186,16 @@ public class APIsDetailActivity extends AppCompatActivity {
                 break;
         }
 
-        pagView.setRepeatCount(0);
         pagView.play();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (player != null && player.isPlaying()) {
+            player.release();
+            player = null;
+        }
     }
 
     private PAGImage createPAGImage() {
