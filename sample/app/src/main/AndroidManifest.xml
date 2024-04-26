@@ -12,7 +12,10 @@
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".TextureDemoActivity"></activity>
+        <activity
+                android:name=".utils.GSensorDemoActivity"
+                android:exported="false" />
+        <activity android:name=".TextureDemoActivity" />
         <activity android:name=".APIsDetailActivity" />
         <activity android:name=".MultiplePAGImageViewActivity" />
         <activity android:name=".PAGImageViewListActivity" />

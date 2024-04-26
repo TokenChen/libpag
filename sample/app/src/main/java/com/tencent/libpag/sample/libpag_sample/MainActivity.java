@@ -1,5 +1,7 @@
 package com.tencent.libpag.sample.libpag_sample;
 
+import com.tencent.libpag.sample.libpag_sample.utils.GSensorDemoActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
                 goToTestDetail(position);
                 break;
             case 6:
-                startActivity(new Intent(MainActivity.this, MultiplePAGImageViewActivity.class));
+                startActivity(new Intent(MainActivity.this, GSensorDemoActivity.class));
                 break;
             case 7:
                 startActivity(new Intent(MainActivity.this, PAGImageViewListActivity.class));
