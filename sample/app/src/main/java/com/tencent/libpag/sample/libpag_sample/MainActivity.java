@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
             "Render Multiple PAGImageView",
             "Render PAGImageView in list",
             "Play Audio In PAG File",
+            "加速度传感器Demo",
     };
 
     @Override
@@ -56,10 +57,13 @@ public class MainActivity extends AppCompatActivity implements SimpleListAdapter
                 goToTestDetail(position);
                 break;
             case 6:
-                startActivity(new Intent(MainActivity.this, GSensorDemoActivity.class));
+                startActivity(new Intent(MainActivity.this, MultiplePAGImageViewActivity.class));
                 break;
             case 7:
                 startActivity(new Intent(MainActivity.this, PAGImageViewListActivity.class));
+                break;
+            case 9:
+                startActivity(new Intent(MainActivity.this, GSensorDemoActivity.class));
                 break;
             default:
                 break;
